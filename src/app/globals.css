@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --purple: 252 100% 62%;
+  --purple-hover: 252 100% 84%;
+  --purple-light: 252 100% 96%;
+
+  --grey-dark: 0 0% 20%;
+  --grey: 0 0% 45%;
+  --grey-light: 0 0% 98%;
+
+  --borders: 0 0% 85%;
+  --white: 0 0% 100%;
+
+  --red: 0 100% 61%;
+
+  --gray-800: rgb(31, 41, 55);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@layer utilities {
+  .heading-m {
+    @apply text-[32px] leading-normal font-instrument-sans font-bold;
+  }
+  .heading-s {
+    @apply text-base leading-normal font-instrument-sans font-bold;
+  }
+  .body-m {
+    @apply text-base leading-normal font-instrument-sans font-normal;
+  }
+  .body-s {
+    @apply text-xs leading-normal font-instrument-sans font-normal;
+  }
+  .custom-shape {
+    clippath: path(
+      "M1 54.5C1 24.9528 24.9528 1 54.5 1H253.5C283.047 1 307 24.9528 307 54.5V577.5C307 607.047 283.047 631 253.5 631H54.5C24.9528 631 1 607.047 1 577.5V54.5Z"
+    );
+  }
+}
