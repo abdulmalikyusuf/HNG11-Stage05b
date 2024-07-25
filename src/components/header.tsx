@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-function Header() {
+function Header({ userId }: { userId: string }) {
   const pathname = usePathname();
   return (
     <header className="md:p-6">
@@ -53,9 +53,11 @@ function Header() {
               <span className="hidden md:inline-flex">Profile Details</span>
             </Link>
           </div>
-          <Button variant="secondary" className="w-fit">
-            <span className="hidden md:inline-block">Preview</span>
-            <Icons.eye className="size-5 md:hidden" />
+          <Button variant="secondary" className="w-fit" asChild>
+            <Link href={`/preview/${userId}`}>
+              <span className="hidden md:inline-block">Preview</span>
+              <Icons.eye className="size-5 md:hidden" />
+            </Link>
           </Button>
         </div>
       </div>

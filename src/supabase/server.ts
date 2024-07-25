@@ -1,11 +1,12 @@
 import { env } from "@/env.mjs";
+import { Database } from "@/supabase/database.types";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 export function createClient() {
   const cookieStore = cookies();
 
-  return createServerClient(env.SUPABASE_URL!, env.SUPABASE_KEY!, {
+  return createServerClient<Database>(env.SUPABASE_URL!, env.SUPABASE_KEY!, {
     cookies: {
       getAll() {
         return cookieStore.getAll();

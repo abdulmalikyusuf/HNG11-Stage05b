@@ -1,5 +1,5 @@
 import { Icons } from "@/components/ui/icons";
-
+import { Toaster } from "@/components/ui/toaster";
 function AuthLayout({
   children,
 }: Readonly<{
@@ -7,7 +7,7 @@ function AuthLayout({
 }>) {
   return (
     <div className="bg-grey-light min-h-svh grid place-items-center">
-      <div className="max-w-[476px] mx-auto w-full">
+      <div className="py-8 md:py-0 max-w-[476px] mx-auto w-full">
         <div className="flex justify-center items-center gap-[7.5px]">
           <Icons.logo className="" />
           {/* <h4 className="text-[26px] text-grey-dark font-bold">devlinks</h4> */}
@@ -52,8 +52,11 @@ function AuthLayout({
             />
           </svg>
         </div>
-        <div className="mt-14 bg-white rounded-xl">
-          <div className="flex flex-col gap-10 p-10">{children}</div>
+        <div className="mt-16 md:mt-14 bg-white rounded-xl">
+          <div className="flex flex-col gap-10 p-10">
+            {children}
+            <Toaster />
+          </div>
         </div>
       </div>
     </div>

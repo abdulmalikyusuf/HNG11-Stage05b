@@ -10,11 +10,40 @@ import { Button } from "@/components/ui/button";
 import Image1 from "@/assets/image/let's get started.png";
 import { Icons } from "@/components/ui/icons";
 import AddLink from "@/components/ui/add-link";
+import { updateProfile } from "@/app/(routes)/(home)/profile/actions";
+import { createClient } from "@/supabase/client";
+import { Tables } from "@/supabase/database.types";
 
 type UseFormInputs = z.infer<typeof LinkSchema>;
 
 function LinksPage() {
   const [show, setShow] = useState(false);
+  const [links, setLinks] = useState<null | UseFormInputs["userLinks"]>(null);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchLinks = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const userId = session?.user?.id as string;
+
+      const { data, error } = await supabase
+        .from("profile")
+        .select("*") // Adjust to select specific columns if needed
+        .eq("userId", userId)
+        .single(); // Use ;
+      console.log(data);
+
+      return data;
+    };
+    fetchLinks().then((res) =>
+      setLinks(res?.links as UseFormInputs["userLinks"])
+    );
+  }, [supabase]);
+
+  console.log(links);
+
   const {
     register,
     control,
@@ -24,12 +53,14 @@ function LinksPage() {
     mode: "onBlur",
     resolver: zodResolver(LinkSchema),
     defaultValues: {
-      userLinks: [
-        {
-          platform: "github",
-          link: "https://www.github.com/johnappleseed",
-        },
-      ],
+      userLinks: links
+        ? links
+        : [
+            {
+              platform: "github",
+              link: "https://www.github.com/johnappleseed",
+            },
+          ],
     },
   });
   const { fields, remove, append } = useFieldArray({
@@ -38,12 +69,19 @@ function LinksPage() {
   });
 
   useEffect(() => {
-    console.log(fields.length);
-
     if (fields.length === 0) setShow(false);
   }, [fields]);
 
-  const onValid = (data) => console.log(data);
+  const onValid = (data: {
+    userLinks: {
+      platform: string;
+      link: string;
+    }[];
+  }) => {
+    console.log(data.userLinks);
+
+    updateProfile({ links: [...data.userLinks, ...links] });
+  };
   const onInvalid = (err) => console.log(err, fields);
 
   return (
@@ -51,9 +89,11 @@ function LinksPage() {
       onSubmit={handleSubmit(onValid, onInvalid)}
       className="bg-white rounded-xl w-full"
     >
-      <div className="p-10 flex flex-col gap-10">
+      <div className="p-6 md:p-10 flex flex-col gap-10">
         <div className="flex flex-col gap-2">
-          <h2 className="heading-m text-grey-dark">Customize your links</h2>
+          <h2 className="text-2xl leading-normal font-bold md:heading-m text-grey-dark">
+            Customize your links
+          </h2>
           <p className="text-grey body-m">
             Add/edit/remove links below and then share all your profiles with
             the world!
@@ -94,9 +134,15 @@ function LinksPage() {
           ) : (
             <div className="rounded-xl flex justify-center items-center gap-3 p-5 bg-grey-light">
               <div className="flex flex-col justify-center items-center gap-10">
-                <Image src={Image1} width={250} height={160} alt="" />
+                <Image
+                  src={Image1}
+                  width={250}
+                  height={160}
+                  alt=""
+                  className="max-md:w-[124px] max-md:h-20"
+                />
                 <div className="text-center">
-                  <h2 className="heading-m text-grey-dark">
+                  <h2 className="text-2xl leading-normal font-bold md:heading-m text-grey-dark">
                     Let’s get you started
                   </h2>
                   <p className="mt-6 text-grey body-m">
@@ -110,9 +156,9 @@ function LinksPage() {
           )}
         </div>
       </div>
-      <div className="border-t border-borders py-6 px-10">
-        <div className="flex justify-end">
-          <Button className="w-fit" type="submit">
+      <div className="border-t border-borders p-4 md:py-6 md:px-10">
+        <div className="md:flex justify-end">
+          <Button className="w-full md:w-fit" type="submit">
             Save
           </Button>
         </div>
