@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -124,15 +125,15 @@ function AddLink({ index, onRemove, register, control, error }: Props) {
                 </SelectTrigger>
                 <SelectContent>
                   {options.map((option) => (
-                    <>
-                      <SelectItem key={option.value} value={option.value}>
+                    <Fragment key={option.value}>
+                      <SelectItem value={option.value}>
                         <span className="inline-flex items-center gap-3">
                           {option.icon}
                           {option.label}
                         </span>
                       </SelectItem>
                       <SelectSeparator />
-                    </>
+                    </Fragment>
                   ))}
                 </SelectContent>
               </Select>

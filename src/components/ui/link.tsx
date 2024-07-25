@@ -24,12 +24,12 @@ const linkVariants = cva(
 );
 
 export interface LinkProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends React.ButtonHTMLAttributes<HTMLAnchorElement>,
     VariantProps<typeof linkVariants> {
   asChild?: boolean;
 }
 
-const Link = React.forwardRef<HTMLButtonElement, LinkProps>(
+const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
   (
     { className, variant = "github", children, asChild = false, ...props },
     ref
@@ -37,9 +37,11 @@ const Link = React.forwardRef<HTMLButtonElement, LinkProps>(
     const IconBefore = Icons[variant ?? "github"] as Icon;
 
     return (
-      <button
+      <a
         className={cn(linkVariants({ variant, className }), "capitalize")}
         ref={ref}
+        rel="noreferrer"
+        target="_blank"
         {...props}
       >
         <span className="inline-flex items-center gap-2">
@@ -47,7 +49,7 @@ const Link = React.forwardRef<HTMLButtonElement, LinkProps>(
           {variant}
         </span>
         <Icons.arrowRight className="size-4 fill-white" />
-      </button>
+      </a>
     );
   }
 );

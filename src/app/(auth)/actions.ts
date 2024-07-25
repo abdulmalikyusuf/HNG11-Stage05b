@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/supabase/server";
+import { randomUUID } from "crypto";
 
 export async function signin(formData: FormData) {
   const supabase = createClient();
@@ -31,7 +32,14 @@ export async function signup(formData: FormData) {
     password: formData.get("password") as string,
   };
 
-  const { error } = await supabase.auth.signUp(data);
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.signUp(data);
+
+  await supabase
+    .from("profile")
+    .insert({ userId: user?.id, email: user?.email, id: randomUUID() });
 
   if (error) {
     redirect("/error");

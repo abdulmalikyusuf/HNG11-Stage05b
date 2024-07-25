@@ -12,7 +12,12 @@ async function ProfilePage() {
   if (!user) {
     return redirect("/error");
   }
-  const { data, error } = await supabase.from("profile").select().single();
+  const { data, error } = await supabase
+    .from("profile")
+    .select()
+    .eq("userId", user.id)
+    .single();
+
   return (
     <form action={updateProfileInfo} className="bg-white rounded-xl flex-1">
       <div className="flex flex-col gap-10 p-10">
@@ -26,6 +31,7 @@ async function ProfilePage() {
         </div>
         <div className="flex flex-col gap-6">
           <ProfileForm
+            profilePhoto={data?.photo}
             defaultValues={{
               firstName: data?.firstName as string,
               lastName: data?.lastName as string,

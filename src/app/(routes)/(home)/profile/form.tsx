@@ -10,8 +10,10 @@ type IFormInputs = z.infer<typeof profileFormSchema>;
 
 function ProfileForm({
   defaultValues,
+  profilePhoto,
 }: {
   defaultValues: { firstName: string; lastName: string; email: string };
+  profilePhoto: string;
 }) {
   const {
     register,
@@ -26,7 +28,7 @@ function ProfileForm({
     <>
       <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-3 h-full p-5 rounded-xl bg-grey-light">
         <p className="body-m whitespace-nowrap w-60">Profile picture</p>
-        <ImageUpload imageUploaded />
+        <ImageUpload profilePhoto={profilePhoto} />
       </div>
       <div className="flex flex-col gap-3 p-5 rounded-xl bg-grey-light">
         <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-1 md:gap-4">

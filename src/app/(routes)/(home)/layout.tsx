@@ -17,9 +17,11 @@ export default async function RootLayout({
   if (!user) {
     return redirect("/error");
   }
-  const { data, error } = await supabase.from("profile").select().single();
-
-  console.log(data);
+  const { data, error } = await supabase
+    .from("profile")
+    .select()
+    .eq("userId", user.id)
+    .single();
 
   return (
     <div className="bg-grey-light">
@@ -35,7 +37,7 @@ export default async function RootLayout({
               <div className="flex flex-col items-center h-full gap-14 py-10">
                 <div className="flex flex-col items-center gap-[25px]">
                   <div className="size-24 rounded-full overflow-clip">
-                    {!data ? (
+                    {!data?.photo ? (
                       <div className="bg-[#EEEEEE] size-full" />
                     ) : (
                       <Image
@@ -61,11 +63,15 @@ export default async function RootLayout({
                     )}
                   </div>
                 </div>
-                <div className="flex flex-col items-center gap-5 w-[237px] h-full overflow-scroll">
+                <div className="flex flex-col items-center gap-5 w-[237px] h-full overflow-y-auto no-scrollbar">
                   {!data
                     ? arrayRange(1, 5, 1).map((i) => <LinkSkeleton key={i} />)
                     : data.links?.map((link) => (
-                        <Link variant={link.platform} key={link.platform} />
+                        <Link
+                          variant={link.platform}
+                          key={link.platform}
+                          href={link.link}
+                        />
                       ))}
                 </div>
               </div>

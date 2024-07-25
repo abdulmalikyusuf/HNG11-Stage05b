@@ -15,7 +15,6 @@ import { createClient } from "@/supabase/client";
 type UseFormInputs = z.infer<typeof LinkSchema>;
 
 function LinksPage() {
-  const [links, setLinks] = useState<null | UseFormInputs["userLinks"]>(null);
   const supabase = createClient();
 
   const {
@@ -23,33 +22,24 @@ function LinksPage() {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm({
     mode: "onBlur",
     resolver: zodResolver(LinkSchema),
     defaultValues: {
-      userLinks: links
-        ? links
-        : [
-            {
-              platform: "github",
-              link: "https://www.github.com/johnappleseed",
-            },
-          ],
+      userLinks: [
+        {
+          platform: "github",
+          link: "https://www.github.com/johnappleseed",
+        },
+      ],
     },
   });
 
   useEffect(() => {
     fetchLinks().then((res) => {
-      setLinks(res?.links as UseFormInputs["userLinks"]);
-      reset({
-        userLinks: res?.links || [
-          {
-            platform: "github",
-            link: "https://www.github.com/johnappleseed",
-          },
-        ],
-      });
+      setValue("userLinks", res?.links);
     });
   }, []);
 
@@ -95,6 +85,8 @@ function LinksPage() {
     const missingPlatforms = platformsToFilter.filter(
       (platform) => !presentPlatforms.includes(platform)
     );
+    console.log({ fields, missingPlatforms });
+
     if (missingPlatforms.length === 0) return;
     append({
       platform: missingPlatforms.at(0),
@@ -140,7 +132,7 @@ function LinksPage() {
           {fields.length > 0 ? (
             fields.map((item, i) => (
               <AddLink
-                key={item.link}
+                key={item.platform}
                 index={i}
                 onRemove={remove}
                 register={register}
