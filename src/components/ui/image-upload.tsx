@@ -4,8 +4,8 @@ import React from "react";
 type Props = { imageUploaded: boolean };
 function ImageUpload({ imageUploaded }: Props) {
   return (
-    <div className="flex items-center gap-8 font-instrument-sans">
-      <div className="size-[193px] rounded-[12px] bg-purple-light">
+    <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-8 font-instrument-sans">
+      <div className="shrink-0 size-[193px] rounded-xl bg-purple-light">
         <div
           className={cn(
             "flex flex-col items-center justify-center gap-2 h-full",
@@ -25,6 +25,7 @@ function ImageUpload({ imageUploaded }: Props) {
       </div>
       <p className="text-grey-dark body-s">
         {imageUploaded ? "Image Not Uploaded" : "Image Uploaded"}
+        Image must be below 1024x1024px. Use PNG or JPG format.
       </p>
     </div>
   );

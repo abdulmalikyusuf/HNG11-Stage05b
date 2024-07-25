@@ -11,6 +11,10 @@ const linkVariants = cva(
       variant: {
         github: "bg-[#1A1A1A]",
         youtube: "bg-red",
+        linkedin: "bg-[#2D68FF]",
+        codewars: "bg-grey-dark",
+        devTo: "bg-[#8A1A50]",
+        freeCodeCamp: "bg-[#302267]",
       },
     },
     defaultVariants: {
@@ -26,8 +30,11 @@ export interface LinkProps
 }
 
 const Link = React.forwardRef<HTMLButtonElement, LinkProps>(
-  ({ className, variant, children, asChild = false, ...props }, ref) => {
-    const IconBefore = variant && (Icons[variant] as Icon);
+  (
+    { className, variant = "github", children, asChild = false, ...props },
+    ref
+  ) => {
+    const IconBefore = Icons[variant ?? "github"] as Icon;
 
     return (
       <button
@@ -36,7 +43,7 @@ const Link = React.forwardRef<HTMLButtonElement, LinkProps>(
         {...props}
       >
         <span className="inline-flex items-center gap-2">
-          <IconBefore className="size-4" />
+          <IconBefore className="size-4 fill-white" />
           {variant}
         </span>
         <Icons.arrowRight className="size-4 fill-white" />
@@ -47,7 +54,7 @@ const Link = React.forwardRef<HTMLButtonElement, LinkProps>(
 Link.displayName = "Link";
 
 function LinkSkeleton() {
-  return <div className="rounded-lg bg-[#EEEEEE] h-11" />;
+  return <div className="rounded-lg bg-[#EEEEEE] h-11 w-full" />;
 }
 
 export { LinkSkeleton, Link, linkVariants };

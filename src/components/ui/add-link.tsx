@@ -5,8 +5,7 @@ import {
   SelectItem,
   SelectValue,
   SelectTrigger,
-  SelectGroup,
-  SelectLabel,
+  SelectSeparator,
 } from "@/components/ui/select";
 import { Icons } from "@/components/ui/icons";
 import {
@@ -20,6 +19,38 @@ import {
 import { z } from "zod";
 import { LinkSchema } from "@/lib/schema";
 
+const options = [
+  {
+    label: "Github",
+    value: "github",
+    icon: <Icons.github className="size-4" />,
+  },
+  {
+    label: "LinkedIn",
+    value: "linkedin",
+    icon: <Icons.linkedin className="size-4" />,
+  },
+  {
+    label: "Youtube",
+    value: "youtube",
+    icon: <Icons.youtube className="size-4" />,
+  },
+  {
+    label: "Codewars",
+    value: "codewars",
+    icon: <Icons.codewars className="size-4" />,
+  },
+  {
+    label: "Dev.to",
+    value: "devTo",
+    icon: <Icons.devTo className="size-4 fill-grey-light" />,
+  },
+  {
+    label: "FreeCodeCamp",
+    value: "freeCodeCamp",
+    icon: <Icons.freeCodeCamp className="size-4" />,
+  },
+];
 type UseFormInputs = z.infer<typeof LinkSchema>;
 type Props = {
   index: number;
@@ -73,47 +104,36 @@ function AddLink({ index, onRemove, register, control, error }: Props) {
         {/* <Controller control={control} name={`userLinks.${index}.platform`}/> */}
         <Controller
           render={({ field }) => {
+            const selectedOption = options.filter(
+              (item) => item.value === field.value
+            );
+
             return (
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select
+                key={field.value}
+                onValueChange={field.onChange}
+                value={field.value}
+              >
                 <SelectTrigger>
                   <SelectValue>
-                    <span className="inline-flex items-center gap-3">
-                      <Icons.github className="size-4" />
-                      Github
+                    <span className="inline-flex items-center gap-3 capitalize">
+                      {selectedOption.at(0)?.icon}
+                      {selectedOption.at(0)?.label}
                     </span>
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="github">
-                    <span className="inline-flex items-center gap-3">
-                      <Icons.github className="size-4" />
-                      Github
-                    </span>
-                  </SelectItem>
-                  <SelectItem value="linkedIn">
-                    <span className="inline-flex items-center gap-3">
-                      <Icons.linkedin className="size-4" />
-                      LinkedIn
-                    </span>
-                  </SelectItem>
-                  <SelectItem value="devTo">
-                    <span className="inline-flex items-center gap-3">
-                      <Icons.devTo className="size-4" />
-                      Dev.to
-                    </span>
-                  </SelectItem>
-                  <SelectItem value="codewars">
-                    <span className="inline-flex items-center gap-3">
-                      <Icons.codewars className="size-4" />
-                      Codewars
-                    </span>
-                  </SelectItem>
-                  <SelectItem value="freeCodeCamp">
-                    <span className="inline-flex items-center gap-3">
-                      <Icons.freeCodeCamp className="size-4" />
-                      freeCodeCamp
-                    </span>
-                  </SelectItem>
+                  {options.map((option) => (
+                    <>
+                      <SelectItem key={option.value} value={option.value}>
+                        <span className="inline-flex items-center gap-3">
+                          {option.icon}
+                          {option.label}
+                        </span>
+                      </SelectItem>
+                      <SelectSeparator />
+                    </>
+                  ))}
                 </SelectContent>
               </Select>
             );
