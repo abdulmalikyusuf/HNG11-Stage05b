@@ -7,12 +7,10 @@ import { useCallback, useEffect, useState } from "react";
 function ImageUpload({ profilePhoto }: { profilePhoto: string | null }) {
   const [image, setImage] = useState(profilePhoto);
 
-  const onDrop = useCallback((acceptedFiles: any) => {
+  const onDrop = useCallback((acceptedFiles: Blob[]) => {
     const reader = new FileReader();
-    console.log(acceptedFiles);
-
     reader.onloadend = () => setImage(reader.result as string);
-    reader.readAsDataURL(acceptedFiles.at(0));
+    reader.readAsDataURL(acceptedFiles.at(0) as Blob);
     //  reader.readAsArrayBuffer(file);
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -30,7 +28,10 @@ function ImageUpload({ profilePhoto }: { profilePhoto: string | null }) {
           isDragActive && "bg-purple-hover"
         )}
       >
-        <input {...getInputProps()} className="sr-only size-full" />
+        <input
+          {...getInputProps({ name: "profilePhoto", id: "profilePhoto" })}
+          className="sr-only size-full"
+        />
         {image && (
           <Image
             src={image}

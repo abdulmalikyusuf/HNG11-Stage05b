@@ -102,7 +102,6 @@ function AddLink({ index, onRemove, register, control, error }: Props) {
       </div>
       <div className="flex flex-col gap-1">
         <small className="body-s text-grey-dark">Platform</small>
-        {/* <Controller control={control} name={`userLinks.${index}.platform`}/> */}
         <Controller
           render={({ field }) => {
             const selectedOption = options.filter(

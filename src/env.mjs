@@ -11,6 +11,7 @@ export const env = createEnv({
     SUPABASE_URL: z.string().url(),
     SUPABASE_KEY: z.string(),
     SUPABASE_JWT_SECRET: z.string(),
+    SUPABASE_BUCKET_NAME: z.string(),
   },
   /*
    * Environment variables available on the client (and server).
@@ -20,6 +21,7 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
     NEXT_PUBLIC_SUPABASE_KEY: z.string(),
+    NEXT_PUBLIC_SUPABASE_BUCKET_NAME: z.string(),
   },
   /*
    * Due to how Next.js bundles environment variables on Edge and Client,
@@ -30,6 +32,9 @@ export const env = createEnv({
   runtimeEnv: {
     SUPABASE_URL: process.env.SUPABASE_URL,
     SUPABASE_KEY: process.env.SUPABASE_KEY,
+    SUPABASE_BUCKET_NAME: process.env.SUPABASE_BUCKET_NAME,
+    NEXT_PUBLIC_SUPABASE_BUCKET_NAME:
+      process.env.NEXT_PUBLIC_SUPABASE_BUCKET_NAME,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_KEY: process.env.NEXT_PUBLIC_SUPABASE_KEY,
     SUPABASE_JWT_SECRET: process.env.SUPABASE_JWT_SECRET,

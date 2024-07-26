@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/supabase/server";
 import { Database } from "@/supabase/database.types";
+import { env } from "@/env.mjs";
 
 export async function updateProfile(
   data: Database["public"]["Tables"]["profile"]["Update"]
@@ -33,6 +34,13 @@ export async function updateProfile(
 
   revalidatePath("/", "layout");
 }
+
+interface ProfilePayLoad {
+  firstName: string;
+  lastName: string;
+  email: string;
+  photo?: string;
+}
 export async function updateProfileInfo(formData: FormData) {
   const supabase = createClient();
 
@@ -42,27 +50,43 @@ export async function updateProfileInfo(formData: FormData) {
   if (!user || !user.email) {
     redirect("/error");
   }
-  const data = {
+  const payload: ProfilePayLoad = {
     email: formData.get("email") as string,
     firstName: formData.get("firstName") as string,
     lastName: formData.get("lastName") as string,
+    photo: "",
   };
 
-  const avatarFile = formData.get("profilePhoto");
-  if (formData.has("profilePhoto")) {
-    const { data, error } = await supabase.storage
-      .from("profile-photos")
-      .upload("public/avatar1.png", avatarFile, {
-        cacheControl: "3600",
-        upsert: false,
-      });
-    console.log({ formData, error, data });
+  const avatarFile = formData.get("profilePhoto") as File;
+
+  if (avatarFile.size > 0) {
+    const { data: userAvatar, error } = await supabase.storage
+      .from(env.SUPABASE_BUCKET_NAME)
+      .upload(
+        `avatars/${payload.firstName} ${payload.lastName}-${avatarFile.name}`,
+        avatarFile,
+        {
+          cacheControl: "3600",
+          upsert: false,
+        }
+      );
+    if (userAvatar) {
+      const { data } = supabase.storage
+        .from(env.SUPABASE_BUCKET_NAME)
+        .getPublicUrl(userAvatar.path, {
+          // transform: {
+          //   width: 100,
+          //   height: 100,
+          // },
+        });
+      payload.photo = data.publicUrl;
+    }
   }
 
   const { error } = await supabase
     .from("profile")
     .update({
-      ...data,
+      ...payload,
     })
     .eq("userId", user.id);
 

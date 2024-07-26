@@ -27,7 +27,7 @@ export default async function RootLayout({
     <div className="bg-grey-light">
       <Header userId={user.id} />
       <main className="min-h-screen p-4 md:p-6 md:pt-0 md:flex gap-6">
-        <div className="w-[560px] bg-white hidden md:sticky md:top-0 h-fit py-10 md:flex items-center justify-center rounded-xl shrink-0">
+        <div className="w-[560px] shrink bg-white hidden md:sticky md:top-0 h-fit py-10 md:flex items-center justify-center rounded-xl">
           <div className="relative mx-auto border-[rgb(31,_41,_55)] bg-[rgb(31,_41,_55)] border-[14px] rounded-[2.5rem] h-[600px] w-[300px] shadow-xl">
             <div className="w-[148px] h-[18px] bg-[rgb(31,_41,_55)] top-0 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute"></div>
             <div className="h-[46px] w-[3px] bg-[rgb(31,_41,_55)] absolute -start-[17px] top-[124px] rounded-s-lg"></div>

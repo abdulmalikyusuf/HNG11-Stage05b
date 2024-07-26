@@ -17,8 +17,8 @@ export const LinkSchema = z.object({
 });
 
 export const profileFormSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
+  firstName: z.string().min(1, "First name here"),
+  lastName: z.string().min(1, "Last name here"),
   email: z.string().email("Provide email"),
 });
 export const signInSchema = z.object({
