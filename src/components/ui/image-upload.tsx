@@ -15,6 +15,8 @@ function ImageUpload({ profilePhoto }: { profilePhoto: string | null }) {
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
+    noClick: true,
+    noKeyboard: true,
     accept: { "image/*": [] },
     multiple: false,
   });
@@ -29,7 +31,11 @@ function ImageUpload({ profilePhoto }: { profilePhoto: string | null }) {
         )}
       >
         <input
-          {...getInputProps({ name: "profilePhoto", id: "profilePhoto" })}
+          {...getInputProps({
+            name: "profilePhoto",
+            id: "profilePhoto",
+            style: { pointerEvents: "none" },
+          })}
           className="sr-only size-full"
         />
         {image && (

@@ -30,7 +30,7 @@ function Header({ userId }: { userId: string }) {
               <Icons.link
                 className={cn(
                   "size-5",
-                  pathname === "/" ? "fill-purple" : "fill-grey"
+                  pathname === "/" ? "!fill-purple" : "fill-grey"
                 )}
               />
               <span className="hidden md:inline-flex">Links</span>

@@ -11,8 +11,16 @@ import Image1 from "@/assets/image/let's get started.png";
 import AddLink from "@/components/ui/add-link";
 import { updateProfile } from "@/app/(routes)/(home)/profile/actions";
 import { createClient } from "@/supabase/client";
+import { toast } from "@/components/ui/use-toast";
 
 type UseFormInputs = z.infer<typeof LinkSchema>;
+
+const userLinks = [
+  {
+    platform: "github",
+    link: "https://www.github.com/johnappleseed",
+  },
+];
 
 function LinksPage() {
   const supabase = createClient();
@@ -27,19 +35,13 @@ function LinksPage() {
   } = useForm({
     mode: "onBlur",
     resolver: zodResolver(LinkSchema),
-    defaultValues: {
-      userLinks: [
-        {
-          platform: "github",
-          link: "https://www.github.com/johnappleseed",
-        },
-      ],
-    },
+    defaultValues: { userLinks },
   });
 
   useEffect(() => {
     fetchLinks().then((res) => {
-      setValue("userLinks", res?.links);
+      if (res?.links !== null && res?.links !== undefined)
+        setValue("userLinks", res?.links);
     });
   }, []);
 
@@ -95,13 +97,25 @@ function LinksPage() {
   };
   console.log(fields);
 
-  const onValid = (data: {
+  const onValid = async (data: {
     userLinks: {
       platform: string;
       link: string;
     }[];
   }) => {
-    updateProfile({ links: filterDuplicates(fields) });
+    try {
+      await updateProfile({ links: filterDuplicates(fields) });
+      toast({
+        description: `Successfully added ${fields.length} links`,
+        icon: "link",
+      });
+    } catch (error) {
+      toast({
+        description: error.message,
+        icon: "error",
+        variant: "destructive",
+      });
+    }
   };
   const onInvalid = (err) => console.log(err, fields);
 

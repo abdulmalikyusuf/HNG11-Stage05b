@@ -13,7 +13,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div
         className={cn(
-          "flex items-center gap-3 py-3 px-4 rounded-lg w-full font-instrument-sans bg-white border border-borders has-[:focus]:border-purple has-[:focus]:[box-shadow:_0px_0px_32px_0px_#633CFF40]",
+          "flex items-center gap-3 py-3 px-4 rounded-lg w-full font-instrument-sans bg-white border border-borders has-[:focus]:border-purple has-[:focus]:shadow-active-selection",
           error && "!border-red ![box-shadow:none]"
         )}
       >

@@ -59,40 +59,45 @@ export async function updateProfileInfo(formData: FormData) {
 
   const avatarFile = formData.get("profilePhoto") as File;
 
-  if (avatarFile.size > 0) {
-    const { data: userAvatar, error } = await supabase.storage
+  if (avatarFile.size === 0) {
+    return {
+      message: "Invalid image",
+    };
+  }
+  const { data: userAvatar, error: imageUploadError } = await supabase.storage
+    .from(env.SUPABASE_BUCKET_NAME)
+    .upload(
+      `avatars/${payload.firstName} ${payload.lastName}-${avatarFile.name}`,
+      avatarFile,
+      {
+        cacheControl: "3600",
+        upsert: false,
+      }
+    );
+  if (imageUploadError?.error === "Duplicate")
+    throw new Error("The resource already exists", {});
+  if (userAvatar) {
+    const { data } = supabase.storage
       .from(env.SUPABASE_BUCKET_NAME)
-      .upload(
-        `avatars/${payload.firstName} ${payload.lastName}-${avatarFile.name}`,
-        avatarFile,
-        {
-          cacheControl: "3600",
-          upsert: false,
-        }
-      );
-    if (userAvatar) {
-      const { data } = supabase.storage
-        .from(env.SUPABASE_BUCKET_NAME)
-        .getPublicUrl(userAvatar.path, {
-          // transform: {
-          //   width: 100,
-          //   height: 100,
-          // },
-        });
-      payload.photo = data.publicUrl;
-    }
+      .getPublicUrl(userAvatar.path, {
+        // transform: {
+        //   width: 100,
+        //   height: 100,
+        // },
+      });
+    payload.photo = data.publicUrl;
   }
 
-  const { error } = await supabase
+  const { error: profileError } = await supabase
     .from("profile")
     .update({
       ...payload,
     })
     .eq("userId", user.id);
 
-  console.log(error);
+  console.log(imageUploadError, profileError);
 
-  if (error) {
+  if (imageUploadError) {
     redirect("/error");
   }
 

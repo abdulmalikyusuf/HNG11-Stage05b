@@ -37,6 +37,11 @@ export async function signup(formData: FormData) {
     error,
   } = await supabase.auth.signUp(data);
 
+  if (error) {
+    // throw new Error(error.message, { ...error });
+    return { message: error.message, code: error.code };
+  }
+
   await supabase
     .from("profile")
     .insert({ userId: user?.id, email: user?.email, id: randomUUID() });

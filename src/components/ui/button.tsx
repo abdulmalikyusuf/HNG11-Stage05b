@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-purple hover:bg-purple-hover hover:[box-shadow:_0px_0px_32px_0px_#633CFF40]",
+          "bg-purple hover:bg-purple-hover hover:shadow-active-selection",
         secondary:
           "bg-white text-purple border border-purple hover:bg-purple-light focus:bg-purple-light",
       },

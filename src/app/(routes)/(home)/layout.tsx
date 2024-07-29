@@ -38,7 +38,7 @@ export default async function RootLayout({
                 <div className="flex flex-col items-center gap-[25px]">
                   <div className="size-24 rounded-full overflow-clip">
                     {!data?.photo ? (
-                      <div className="bg-[#EEEEEE] size-full" />
+                      <div className="bg-[#EEEEEE] size-full animate-pulse" />
                     ) : (
                       <Image
                         src={data && data.photo}
@@ -64,8 +64,15 @@ export default async function RootLayout({
                   </div>
                 </div>
                 <div className="flex flex-col items-center gap-5 w-[237px] h-full overflow-y-auto no-scrollbar">
-                  {!data
-                    ? arrayRange(1, 5, 1).map((i) => <LinkSkeleton key={i} />)
+                  {!data.links
+                    ? arrayRange(1, 5, 1).map((i) => (
+                        <LinkSkeleton
+                          key={i}
+                          className={`${
+                            i % 2 === 0 ? "duration-200" : "duration-300"
+                          }`}
+                        />
+                      ))
                     : data.links?.map((link) => (
                         <Link
                           variant={link.platform}

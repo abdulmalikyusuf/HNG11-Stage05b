@@ -35,7 +35,7 @@ function Form() {
         <small className="body-s text-grey-dark">Create password</small>
         <Input
           placeholder="At least 8 characters"
-          id="password"
+          type="password"
           {...register("password")}
           error={errors.password?.message}
         >
@@ -46,6 +46,7 @@ function Form() {
         <small className="body-s text-grey-dark">Confirm password</small>
         <Input
           placeholder="At least 8 characters"
+          type="password"
           {...register("confirmPassword")}
           error={errors.confirmPassword?.message}
         >

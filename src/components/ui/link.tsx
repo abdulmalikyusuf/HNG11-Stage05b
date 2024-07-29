@@ -15,6 +15,13 @@ const linkVariants = cva(
         codewars: "bg-grey-dark",
         devTo: "bg-[#8A1A50]",
         freeCodeCamp: "bg-[#302267]",
+        twitter: "bg-[#43B7E9]",
+        facebook: "bg-[#2442AC]",
+        twitch: "bg-[#EE3FC8]",
+        gitlab: "bg-[#EB4925]",
+        hashnode: "bg-[#0330D1]",
+        stackOverflow: "bg-[#EC7100]",
+        frontendMentor: "bg-white border border-borders",
       },
     },
     defaultVariants: {
@@ -55,8 +62,15 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
 );
 Link.displayName = "Link";
 
-function LinkSkeleton() {
-  return <div className="rounded-lg bg-[#EEEEEE] h-11 w-full" />;
+function LinkSkeleton({ className }: { className: string }) {
+  return (
+    <div
+      className={cn(
+        "rounded-lg bg-[#EEEEEE] h-11 w-full animate-pulse",
+        className
+      )}
+    />
+  );
 }
 
 export { LinkSkeleton, Link, linkVariants };

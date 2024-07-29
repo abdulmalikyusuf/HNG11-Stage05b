@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { Toaster } from "@/components/ui/toaster";
 import { fontInstrumentSans } from "@/lib/fonts";
 import "./globals.css";
 
@@ -19,6 +20,7 @@ export default function RootLayout({
         className={`${fontInstrumentSans.variable} font-instrument-sans text-grey 3xl:container`}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );
