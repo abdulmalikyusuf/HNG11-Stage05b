@@ -1,10 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect } from "react";
 import Image from "next/image";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { LinkSchema } from "@/lib/schema";
+import { LinkSchema, Platforms as PlatformsType } from "@/lib/schema";
 
 import { Button } from "@/components/ui/button";
 import Image1 from "@/assets/image/let's get started.png";
@@ -12,8 +13,11 @@ import AddLink from "@/components/ui/add-link";
 import { updateProfile } from "@/app/(routes)/(home)/profile/actions";
 import { createClient } from "@/supabase/client";
 import { toast } from "@/components/ui/use-toast";
+import { platforms } from "./platforms";
 
 type UseFormInputs = z.infer<typeof LinkSchema>;
+type Platforms = z.infer<typeof PlatformsType>;
+type Link = { link: string; platform: Platforms };
 
 const userLinks = [
   {
@@ -29,7 +33,6 @@ function LinksPage() {
     register,
     control,
     handleSubmit,
-    reset,
     setValue,
     formState: { errors },
   } = useForm({
@@ -41,11 +44,11 @@ function LinksPage() {
   useEffect(() => {
     fetchLinks().then((res) => {
       if (res?.links !== null && res?.links !== undefined)
-        setValue("userLinks", res?.links);
+        setValue("userLinks", res?.links as Link[]);
     });
   }, []);
 
-  const filterDuplicates = (linksArray) => {
+  const filterDuplicates = (linksArray: Link[]) => {
     const seen = new Set();
     return linksArray.filter((item) => {
       const duplicate = seen.has(`${item.link}-${item.platform}`);
@@ -72,14 +75,7 @@ function LinksPage() {
   });
 
   const appendField = () => {
-    const platformsToFilter = [
-      "github",
-      "freeCodeCamp",
-      "codewars",
-      "youtube",
-      "linkedin",
-      "devTo",
-    ];
+    const platformsToFilter = platforms.map((platform) => platform.value);
     // Extract the platforms present in the links array
     const presentPlatforms = fields.map((link) => link.platform);
 
@@ -87,15 +83,15 @@ function LinksPage() {
     const missingPlatforms = platformsToFilter.filter(
       (platform) => !presentPlatforms.includes(platform)
     );
-    console.log({ fields, missingPlatforms });
+    // console.log({ fields, missingPlatforms });
 
     if (missingPlatforms.length === 0) return;
     append({
-      platform: missingPlatforms.at(0),
+      platform: missingPlatforms.at(0) as string,
       link: "https://www.github.com/johnappleseed",
     });
   };
-  console.log(fields);
+  // console.log(fields);
 
   const onValid = async (data: {
     userLinks: {
@@ -104,9 +100,10 @@ function LinksPage() {
     }[];
   }) => {
     try {
-      await updateProfile({ links: filterDuplicates(fields) });
+      await updateProfile({ links: filterDuplicates(data.userLinks) });
+
       toast({
-        description: `Successfully added ${fields.length} links`,
+        description: `Successfully added ${data.userLinks.length} links`,
         icon: "link",
       });
     } catch (error) {
@@ -117,7 +114,12 @@ function LinksPage() {
       });
     }
   };
-  const onInvalid = (err) => console.log(err, fields);
+  const onInvalid = (err: {
+    userLinks: {
+      platform: string;
+      link: string;
+    }[];
+  }) => console.log(err, fields);
 
   return (
     <form

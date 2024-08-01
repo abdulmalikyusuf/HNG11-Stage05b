@@ -55,6 +55,7 @@ async function PreviewPage({ params }: PreviewPageProps) {
                     alt={data.firstName + " " + data.lastName}
                     width={104}
                     height={104}
+                    className="object-cover"
                   />
                 )}
               </div>

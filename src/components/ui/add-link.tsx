@@ -1,4 +1,12 @@
 import { Fragment } from "react";
+import {
+  Control,
+  Controller,
+  UseFieldArrayRemove,
+  UseFormRegister,
+} from "react-hook-form";
+import { z } from "zod";
+
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -8,80 +16,9 @@ import {
   SelectTrigger,
   SelectSeparator,
 } from "@/components/ui/select";
-import { Icons } from "@/components/ui/icons";
-import {
-  Control,
-  Controller,
-  FieldErrors,
-  UseFieldArrayRemove,
-  useForm,
-  UseFormRegister,
-} from "react-hook-form";
-import { z } from "zod";
+import { platforms } from "@/app/(routes)/(home)/platforms";
 import { LinkSchema } from "@/lib/schema";
 
-const options = [
-  {
-    label: "Github",
-    value: "github",
-    icon: <Icons.github className="size-4 fill-grey" />,
-  },
-  {
-    label: "LinkedIn",
-    value: "linkedin",
-    icon: <Icons.linkedin className="size-4 fill-grey" />,
-  },
-  {
-    label: "Youtube",
-    value: "youtube",
-    icon: <Icons.youtube className="size-4 fill-grey" />,
-  },
-  {
-    label: "Codewars",
-    value: "codewars",
-    icon: <Icons.codewars className="size-4 fill-grey" />,
-  },
-  {
-    label: "Dev.to",
-    value: "devTo",
-    icon: <Icons.devTo className="size-4 fill-grey" />,
-  },
-  {
-    label: "FreeCodeCamp",
-    value: "freeCodeCamp",
-    icon: <Icons.freeCodeCamp className="size-4 fill-grey" />,
-  },
-  {
-    label: "twitter",
-    value: "twitter",
-    icon: <Icons.twitter className="size-4 fill-grey" />,
-  },
-  {
-    label: "twitch",
-    value: "twitch",
-    icon: <Icons.twitch className="size-4 fill-grey" />,
-  },
-  {
-    label: "Frontend Mentor",
-    value: "frontendMentor",
-    icon: <Icons.frontendMentor className="size-4 fill-grey" />,
-  },
-  {
-    label: "Hashnode",
-    value: "hashnode",
-    icon: <Icons.hashnode className="size-4 fill-grey" />,
-  },
-  {
-    label: "Stack Overflow",
-    value: "stackOverflow",
-    icon: <Icons.stackOverflow className="size-4 fill-grey" />,
-  },
-  {
-    label: "Codepen",
-    value: "codepen",
-    icon: <Icons.codepen className="size-4 fill-grey" />,
-  },
-];
 type UseFormInputs = z.infer<typeof LinkSchema>;
 type Props = {
   index: number;
@@ -134,8 +71,8 @@ function AddLink({ index, onRemove, register, control, error }: Props) {
         <small className="body-s text-grey-dark">Platform</small>
         <Controller
           render={({ field }) => {
-            const selectedOption = options.filter(
-              (item) => item.value === field.value
+            const selectedOption = platforms.filter(
+              (platform) => platform.value === field.value
             );
 
             return (
@@ -153,12 +90,12 @@ function AddLink({ index, onRemove, register, control, error }: Props) {
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {options.map((option) => (
-                    <Fragment key={option.value}>
-                      <SelectItem value={option.value}>
-                        <span className="inline-flex items-center gap-3">
-                          {option.icon}
-                          {option.label}
+                  {platforms.map((platform) => (
+                    <Fragment key={platform.value}>
+                      <SelectItem value={platform.value}>
+                        <span className="inline-flex items-center gap-3 capitalize">
+                          {platform.icon}
+                          {platform.label}
                         </span>
                       </SelectItem>
                       <SelectSeparator />

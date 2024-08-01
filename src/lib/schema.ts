@@ -1,16 +1,24 @@
 import { z } from "zod";
 
+export const Platforms = z.enum([
+  "github",
+  "codewars",
+  "linkedin",
+  "devTo",
+  "freeCodeCamp",
+  "youtube",
+  "twitter",
+  "twitch",
+  "frontendMentor",
+  "hashnode",
+  "stackOverflow",
+  "codepen",
+]);
+
 export const LinkSchema = z.object({
   userLinks: z.array(
     z.object({
-      platform: z.enum([
-        "github",
-        "codewars",
-        "linkedIn",
-        "devTo",
-        "freeCodeCamp",
-        "youtube",
-      ]),
+      platform: Platforms,
       link: z.string().url("Invalid url format"),
     })
   ),
