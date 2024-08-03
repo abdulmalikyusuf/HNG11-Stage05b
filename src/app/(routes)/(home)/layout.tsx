@@ -1,9 +1,10 @@
+import Image from "next/image";
+import { redirect } from "next/navigation";
+
 import Header from "@/components/header";
 import { Link, LinkSkeleton } from "@/components/ui/link";
 import { arrayRange } from "@/lib/utils";
 import { createClient } from "@/supabase/server";
-import Image from "next/image";
-import { redirect } from "next/navigation";
 
 export default async function RootLayout({
   children,
@@ -22,6 +23,10 @@ export default async function RootLayout({
     .select()
     .eq("userId", user.id)
     .single();
+
+  if (data === null) {
+    return redirect("/error");
+  }
 
   return (
     <div className="bg-grey-light">
@@ -56,7 +61,7 @@ export default async function RootLayout({
                         {data.firstName} {data.lastName}
                       </p>
                     )}
-                    {!data ? (
+                    {!data.email ? (
                       <div className="h-2 w-[72px] rounded-full bg-[#EEEEEE]"></div>
                     ) : (
                       <p className="body-s text-grey">{data.email}</p>

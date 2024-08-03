@@ -10,21 +10,20 @@ import { LinkSchema, Platforms as PlatformsType } from "@/lib/schema";
 import { Button } from "@/components/ui/button";
 import Image1 from "@/assets/image/let's get started.png";
 import AddLink from "@/components/ui/add-link";
-import { updateProfile } from "@/app/(routes)/(home)/profile/actions";
+import { updateProfile } from "@/app/(routes)/(home)/profile/_actions";
 import { createClient } from "@/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 import { platforms } from "./platforms";
+import { Link } from "@/types";
 
 type UseFormInputs = z.infer<typeof LinkSchema>;
-type Platforms = z.infer<typeof PlatformsType>;
-type Link = { link: string; platform: Platforms };
 
-const userLinks = [
+const userLinks: Link[] = [
   {
     platform: "github",
     link: "https://www.github.com/johnappleseed",
   },
-];
+] satisfies Link[];
 
 function LinksPage() {
   const supabase = createClient();
@@ -44,9 +43,9 @@ function LinksPage() {
   useEffect(() => {
     fetchLinks().then((res) => {
       if (res?.links !== null && res?.links !== undefined)
-        setValue("userLinks", res?.links as Link[]);
+        setValue("userLinks", res?.links);
     });
-  }, []);
+  });
 
   const filterDuplicates = (linksArray: Link[]) => {
     const seen = new Set();
@@ -83,22 +82,16 @@ function LinksPage() {
     const missingPlatforms = platformsToFilter.filter(
       (platform) => !presentPlatforms.includes(platform)
     );
-    // console.log({ fields, missingPlatforms });
+    const nextPlatform = missingPlatforms.at(0);
+    if (nextPlatform === undefined) return;
 
-    if (missingPlatforms.length === 0) return;
     append({
-      platform: missingPlatforms.at(0) as string,
+      platform: nextPlatform,
       link: "https://www.github.com/johnappleseed",
     });
   };
-  // console.log(fields);
 
-  const onValid = async (data: {
-    userLinks: {
-      platform: string;
-      link: string;
-    }[];
-  }) => {
+  const onValid = async (data: { userLinks: Link[] }) => {
     try {
       await updateProfile({ links: filterDuplicates(data.userLinks) });
 
@@ -107,23 +100,19 @@ function LinksPage() {
         icon: "link",
       });
     } catch (error) {
+      console.log(error);
+
       toast({
-        description: error.message,
+        description: "An error occurred",
         icon: "error",
         variant: "destructive",
       });
     }
   };
-  const onInvalid = (err: {
-    userLinks: {
-      platform: string;
-      link: string;
-    }[];
-  }) => console.log(err, fields);
 
   return (
     <form
-      onSubmit={handleSubmit(onValid, onInvalid)}
+      onSubmit={handleSubmit(onValid)}
       className="bg-white rounded-xl w-full"
     >
       <div className="p-6 md:p-10 flex flex-col gap-10">

@@ -1,6 +1,7 @@
 import { Icons } from "@/components/ui/icons";
+import { PlatformWithLabelAndIcon } from "@/types";
 
-export const platforms = [
+export const platforms: PlatformWithLabelAndIcon[] = [
   {
     label: "Github",
     value: "github",

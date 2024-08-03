@@ -10,10 +10,10 @@ type IFormInputs = z.infer<typeof profileFormSchema>;
 
 function ProfileForm({
   defaultValues,
-  profilePhoto,
+  profilePhoto = null,
 }: {
   defaultValues: { firstName: string; lastName: string; email: string };
-  profilePhoto: string;
+  profilePhoto: string | null | undefined;
 }) {
   const {
     register,

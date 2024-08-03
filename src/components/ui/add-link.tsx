@@ -17,24 +17,17 @@ import {
   SelectSeparator,
 } from "@/components/ui/select";
 import { platforms } from "@/app/(routes)/(home)/platforms";
-import { LinkSchema } from "@/lib/schema";
+import { Link } from "@/types";
 
-type UseFormInputs = z.infer<typeof LinkSchema>;
 type Props = {
   index: number;
   onRemove: UseFieldArrayRemove;
   register: UseFormRegister<{
-    userLinks: {
-      platform: string;
-      link: string;
-    }[];
+    userLinks: Link[];
   }>;
   control: Control<
     {
-      userLinks: {
-        platform: string;
-        link: string;
-      }[];
+      userLinks: Link[];
     },
     any
   >;

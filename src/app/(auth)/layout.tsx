@@ -10,7 +10,6 @@ function AuthLayout({
       <div className="py-8 md:py-0 max-w-[476px] mx-auto w-full">
         <div className="flex justify-center items-center gap-[7.5px]">
           <Icons.logo className="" />
-          {/* <h4 className="text-[26px] text-grey-dark font-bold">devlinks</h4> */}
           <svg
             width="136"
             height="27"

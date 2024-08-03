@@ -33,7 +33,7 @@ const linkVariants = cva(
 );
 
 export interface LinkProps
-  extends React.ButtonHTMLAttributes<HTMLAnchorElement>,
+  extends React.AnchorHTMLAttributes<HTMLAnchorElement>,
     VariantProps<typeof linkVariants> {
   asChild?: boolean;
 }

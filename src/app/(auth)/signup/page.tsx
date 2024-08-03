@@ -45,7 +45,7 @@ function SignUpPage() {
     }
 
     const { data: profile } = await supabase.from("profile").insert({
-      userId: "9c4c14c5-c7d7-4e67-ab70-0d470081b2e3",
+      userId: user?.id,
       email: user?.email,
       id: crypto.randomUUID(),
     });

@@ -76,13 +76,17 @@ async function PreviewPage({ params }: PreviewPageProps) {
               </div>
             </div>
             <div className="flex flex-col gap-5 w-full">
-              {data?.links.map((link) => (
-                <Link
-                  key={link.platform}
-                  variant={link.platform}
-                  href={link.link}
-                />
-              ))}
+              {data?.links ? (
+                data?.links.map((link) => (
+                  <Link
+                    key={link.platform}
+                    variant={link.platform}
+                    href={link.link}
+                  />
+                ))
+              ) : (
+                <p className="body-s">No links added yet!</p>
+              )}
             </div>
           </div>
         </div>

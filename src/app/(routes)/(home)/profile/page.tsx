@@ -1,20 +1,19 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import ProfileForm from "./form";
 import { createClient } from "@/supabase/client";
-import { updateProfileInfo } from "./actions";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Database } from "@/supabase/database.types";
+import { updateProfileInfo } from "./_actions";
+import { ProfileRow } from "@/supabase/database.types";
 import { toast } from "@/components/ui/use-toast";
 
 function ProfilePage() {
   const supabase = createClient();
   const router = useRouter();
-  const [profile, setProfile] = useState<
-    null | Database["public"]["Tables"]["profile"]["Row"]
-  >(null);
+  const [profile, setProfile] = useState<null | ProfileRow>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -39,13 +38,13 @@ function ProfilePage() {
     };
 
     fetchProfile();
-  }, []);
+  }, [router, supabase]);
 
   return (
     <form
       action={async (formData) => {
         try {
-          await updateProfileInfo(formData).then(({ message }) =>
+          await updateProfileInfo(formData).then((res) =>
             toast({
               description: "Your changes have been successfully saved!",
               icon: "save",
@@ -54,7 +53,7 @@ function ProfilePage() {
         } catch (error) {
           console.log(error);
           toast({
-            description: error.message,
+            description: "Error in updating Profile",
             icon: "save",
             variant: "destructive",
           });

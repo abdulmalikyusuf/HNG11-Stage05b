@@ -74,7 +74,7 @@ export async function updateProfileInfo(formData: FormData) {
         upsert: false,
       }
     );
-  if (imageUploadError?.error === "Duplicate")
+  if (imageUploadError?.message === "Duplicate")
     throw new Error("The resource already exists", {});
   if (userAvatar) {
     const { data } = supabase.storage
