@@ -71,7 +71,7 @@ export async function updateProfileInfo(formData: FormData) {
       avatarFile,
       {
         cacheControl: "3600",
-        upsert: false,
+        upsert: true,
       }
     );
   if (imageUploadError?.message === "Duplicate")
