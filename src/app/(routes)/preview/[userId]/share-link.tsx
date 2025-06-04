@@ -9,6 +9,7 @@ import { toast } from "@/components/ui/use-toast";
 function ShareLink() {
   const router = useRouter();
   const [url, setUrl] = useState("");
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -16,7 +17,17 @@ function ShareLink() {
     }
   }, [router]);
 
+  useEffect(() => {
+    let timeout = setTimeout(() => {
+      setCopied(false);
+    }, 1000);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [copied]);
+
   const handleCopy = async () => {
+    setCopied(true);
     await navigator.clipboard.writeText(url);
     toast({
       icon: "link",
@@ -26,7 +37,7 @@ function ShareLink() {
   return (
     <>
       <Button className="w-fit" onClick={handleCopy}>
-        Share Link
+        {copied ? "Copied" : "Share Link"}
       </Button>
     </>
   );

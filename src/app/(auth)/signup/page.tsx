@@ -1,60 +1,66 @@
 "use client";
 
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { createClient } from "@/supabase/client";
 import { Icons } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
-import { signUpSchema } from "@/lib/schema";
+import { signUpSchema, type SignUpSchema } from "@/lib/schema";
 import { Button } from "@/components/ui/button";
-import { signup } from "@/app/(auth)/actions";
 import { toast } from "@/components/ui/use-toast";
-
-type IFormInputs = z.infer<typeof signUpSchema>;
+import { signUp } from "@/lib/actions/auth";
+import { authenticate } from "@/lib/actions/user";
 
 function SignUpPage() {
+  const [pending, setPending] = useState(false);
   const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IFormInputs>({
+  } = useForm<SignUpSchema>({
     mode: "onBlur",
     resolver: zodResolver(signUpSchema),
   });
 
-  const onSubmit = async (data: IFormInputs) => {
-    const supabase = createClient();
+  const onSubmit = async (data: SignUpSchema) => {
+    setPending(true);
 
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.signUp(data);
+    const { error, success, message } = await signUp(data);
 
     if (error) {
       toast({
-        description: error.message,
+        description: error,
         icon: "error",
         variant: "destructive",
       });
-      return;
     }
+    if (success) {
+      toast({
+        description: "Account created successfully!",
+        icon: "link",
+      });
+      const formdata = new FormData();
+      formdata.set("email", data.email);
+      formdata.set("password", data.password);
+      const res = await authenticate(undefined, formdata);
 
-    const { data: profile } = await supabase.from("profile").insert({
-      userId: user?.id,
-      email: user?.email,
-      id: crypto.randomUUID(),
-    });
-
-    toast({
-      description: "Account created successfully!",
-      icon: "link",
-    });
-    router.push("/");
+      if (res) {
+        toast({
+          description: res,
+          icon: "error",
+          title: "Uh oh! Something went wrong.",
+          variant: "destructive",
+        });
+      }
+      setPending(false);
+      router.push("/");
+    }
+    setPending(false);
   };
   return (
     <>
@@ -97,8 +103,8 @@ function SignUpPage() {
           <Input
             placeholder="At least 8 characters"
             type="password"
-            {...register("confirmPassword")}
-            error={errors.confirmPassword?.message}
+            {...register("password_confirmation")}
+            error={errors.password_confirmation?.message}
           >
             <Icons.password className="size-4 fill-grey" />
           </Input>
@@ -107,7 +113,13 @@ function SignUpPage() {
           Password must contain at least 8 characters
         </p>
         <div className="">
-          <Button formAction={signup}>Create new account</Button>
+          <Button>
+            {pending ? (
+              <Loader2 className="animate-spin size-4" />
+            ) : (
+              "Create new account"
+            )}
+          </Button>
         </div>
         <p className="text-center body-m">
           Already have an account?{" "}

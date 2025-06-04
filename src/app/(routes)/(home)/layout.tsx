@@ -1,31 +1,36 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
 
 import Header from "@/components/header";
 import { Link, LinkSkeleton } from "@/components/ui/link";
 import { arrayRange } from "@/lib/utils";
-import { createClient } from "@/supabase/server";
+import { auth } from "@/lib/auth";
+import { db } from "@/db";
+import { users } from "@/db/schema";
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return redirect("/error");
-  }
-  const { data, error } = await supabase
-    .from("profile")
-    .select()
-    .eq("userId", user.id)
-    .single();
+  const session = await auth();
+  const headersList = headers();
+  const currentPath = headersList.get("x-pathname") || "";
 
-  if (data === null) {
-    return redirect("/error");
+  if (!session || !session.user) {
+    redirect(`/signin?callbackUrl=${encodeURIComponent(currentPath)}`);
+  }
+
+  const data = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, session.user.id));
+  const user = data.at(0);
+
+  if (!user) {
+    redirect("/signin");
   }
 
   return (
@@ -42,47 +47,47 @@ export default async function RootLayout({
               <div className="flex flex-col items-center h-full gap-14 py-10">
                 <div className="flex flex-col items-center gap-[25px]">
                   <div className="size-24 rounded-full overflow-clip">
-                    {!data?.photo ? (
-                      <div className="bg-[#EEEEEE] size-full animate-pulse" />
-                    ) : (
+                    {user.avatar ? (
                       <Image
-                        src={data && data.photo}
-                        alt={data.firstName + " " + data.lastName}
+                        src={user.avatar}
+                        alt={`${user.firstName} ${user.lastName}`}
                         width={96}
                         height={96}
                       />
+                    ) : (
+                      <div className="bg-[#EEEEEE] size-full animate-pulse" />
                     )}
                   </div>
                   <div className="flex flex-col items-center gap-3">
-                    {!data ? (
-                      <div className="h-4 w-[160px] rounded-full bg-[#EEEEEE]"></div>
-                    ) : (
+                    {user.firstName && user.lastName ? (
                       <p className="heading-s text-grey-dark">
-                        {data.firstName} {data.lastName}
+                        {`${user.firstName} ${user.lastName}`}
                       </p>
-                    )}
-                    {!data.email ? (
-                      <div className="h-2 w-[72px] rounded-full bg-[#EEEEEE]"></div>
                     ) : (
-                      <p className="body-s text-grey">{data.email}</p>
+                      <div className="h-4 w-[160px] rounded-full bg-[#EEEEEE]"></div>
+                    )}
+                    {user.email ? (
+                      <p className="body-s text-grey">{user.email}</p>
+                    ) : (
+                      <div className="h-2 w-[72px] rounded-full bg-[#EEEEEE]"></div>
                     )}
                   </div>
                 </div>
                 <div className="flex flex-col items-center gap-5 w-[237px] h-full overflow-y-auto no-scrollbar">
-                  {!data.links
-                    ? arrayRange(1, 5, 1).map((i) => (
+                  {user.socialLinks && user.socialLinks?.length > 0
+                    ? user.socialLinks.map((socialLink) => (
+                        <Link
+                          variant={socialLink.platform}
+                          key={socialLink.url}
+                          href={socialLink.url}
+                        />
+                      ))
+                    : arrayRange(1, 5, 1).map((i) => (
                         <LinkSkeleton
                           key={i}
                           className={`${
                             i % 2 === 0 ? "duration-200" : "duration-300"
                           }`}
-                        />
-                      ))
-                    : data.links?.map((link) => (
-                        <Link
-                          variant={link.platform}
-                          key={link.platform}
-                          href={link.link}
                         />
                       ))}
                 </div>

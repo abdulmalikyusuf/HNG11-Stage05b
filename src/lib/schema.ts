@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const Platforms = z.enum([
+export const typeOfPlatform = [
   "github",
   "codewars",
   "linkedin",
@@ -13,13 +13,16 @@ export const Platforms = z.enum([
   "hashnode",
   "stackOverflow",
   "codepen",
-]);
+] as const;
+
+export const TypeOfPlatform = z.enum(typeOfPlatform);
+export type PlatformTypes = (typeof typeOfPlatform)[number];
 
 export const LinkSchema = z.object({
-  userLinks: z.array(
+  socialLinks: z.array(
     z.object({
-      platform: Platforms,
-      link: z.string().url("Invalid url format"),
+      platform: TypeOfPlatform,
+      url: z.string().url("Invalid url format"),
     })
   ),
 });
@@ -73,9 +76,12 @@ export const signUpSchema = z
     password: z.string().min(8, {
       message: "Too short",
     }),
-    confirmPassword: z.string(),
+    password_confirmation: z.string(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.password === data.password_confirmation, {
     message: "Passwords do not match",
-    path: ["confirmPassword"],
+    path: ["password_confirmation"],
   });
+
+export type SignUpSchema = z.infer<typeof signUpSchema>;
+export type SignInSchema = z.infer<typeof signInSchema>;

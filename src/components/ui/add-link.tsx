@@ -17,17 +17,17 @@ import {
   SelectSeparator,
 } from "@/components/ui/select";
 import { platforms } from "@/app/(routes)/(home)/platforms";
-import { Link } from "@/types";
+import { SocialLink } from "@/types";
 
 type Props = {
   index: number;
   onRemove: UseFieldArrayRemove;
   register: UseFormRegister<{
-    userLinks: Link[];
+    socialLinks: SocialLink[];
   }>;
   control: Control<
     {
-      userLinks: Link[];
+      socialLinks: SocialLink[];
     },
     any
   >;
@@ -64,7 +64,7 @@ function AddLink({ index, onRemove, register, control, error }: Props) {
         <small className="body-s text-grey-dark">Platform</small>
         <Controller
           render={({ field }) => {
-            const selectedOption = platforms.filter(
+            const selectedOption = platforms.find(
               (platform) => platform.value === field.value
             );
 
@@ -77,35 +77,37 @@ function AddLink({ index, onRemove, register, control, error }: Props) {
                 <SelectTrigger>
                   <SelectValue>
                     <span className="inline-flex items-center gap-3 capitalize">
-                      {selectedOption.at(0)?.icon}
-                      {selectedOption.at(0)?.label}
+                      {selectedOption!.icon}
+                      {selectedOption!.label}
                     </span>
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {platforms.map((platform) => (
-                    <Fragment key={platform.value}>
-                      <SelectItem value={platform.value}>
-                        <span className="inline-flex items-center gap-3 capitalize">
-                          {platform.icon}
-                          {platform.label}
-                        </span>
-                      </SelectItem>
-                      <SelectSeparator />
-                    </Fragment>
-                  ))}
+                  {platforms
+                    .filter((platform) => platform.value !== field.value)
+                    .map((platform) => (
+                      <Fragment key={platform.value}>
+                        <SelectItem value={platform.value}>
+                          <span className="inline-flex items-center gap-3 capitalize">
+                            {platform.icon}
+                            {platform.label}
+                          </span>
+                        </SelectItem>
+                        <SelectSeparator />
+                      </Fragment>
+                    ))}
                 </SelectContent>
               </Select>
             );
           }}
-          name={`userLinks.${index}.platform`}
+          name={`socialLinks.${index}.platform`}
           control={control}
         />
       </div>
       <div className="flex flex-col gap-1">
         <small className="body-s text-grey-dark">Link</small>
         <Input
-          {...register(`userLinks.${index}.link`)}
+          {...register(`socialLinks.${index}.url`)}
           placeholder="e.g. https://www.github.com/johnappleseed"
           error={error}
         />

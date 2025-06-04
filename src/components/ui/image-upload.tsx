@@ -32,8 +32,8 @@ function ImageUpload({ profilePhoto }: { profilePhoto: string | null }) {
       >
         <input
           {...getInputProps({
-            name: "profilePhoto",
-            id: "profilePhoto",
+            name: "avatar",
+            id: "avatar",
             style: { pointerEvents: "none" },
           })}
           className="sr-only size-full"
@@ -55,7 +55,7 @@ function ImageUpload({ profilePhoto }: { profilePhoto: string | null }) {
           </div>
         )}
         <label
-          htmlFor="profilePhoto"
+          htmlFor="avatar"
           className={cn(
             "flex flex-col items-center justify-center gap-2 h-full absolute inset-0 z-[1] cursor-pointer",
             image ? "text-white fill-white" : "text-purple fill-purple"

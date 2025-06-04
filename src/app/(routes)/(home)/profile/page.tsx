@@ -1,66 +1,32 @@
-"use client";
+import { redirect } from "next/navigation";
+import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-
-import { Button } from "@/components/ui/button";
+import { auth } from "@/lib/auth";
+import { db } from "@/db";
+import { users } from "@/db/schema";
 import ProfileForm from "./form";
-import { createClient } from "@/supabase/client";
-import { updateProfileInfo } from "./_actions";
-import { ProfileRow } from "@/supabase/database.types";
-import { toast } from "@/components/ui/use-toast";
 
-function ProfilePage() {
-  const supabase = createClient();
-  const router = useRouter();
-  const [profile, setProfile] = useState<null | ProfileRow>(null);
+async function ProfilePage() {
+  const session = await auth();
+  const headersList = headers();
+  const currentPath = headersList.get("x-pathname") || "";
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (!data.user) {
-        router.push("/error");
-        return;
-      }
+  if (!session || !session.user) {
+    redirect(`/signin?callbackUrl=${encodeURIComponent(currentPath)}`);
+  }
 
-      const { data: profileData, error } = await supabase
-        .from("profile")
-        .select()
-        .eq("userId", data.user.id)
-        .single();
+  const data = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, session.user.id));
+  const user = data.at(0);
 
-      if (error) {
-        console.error("Error fetching profile:", error);
-        return;
-      }
-
-      setProfile(profileData);
-    };
-
-    fetchProfile();
-  }, [router, supabase]);
-
+  if (!user) {
+    redirect("/signin");
+  }
   return (
-    <form
-      action={async (formData) => {
-        try {
-          await updateProfileInfo(formData).then((res) =>
-            toast({
-              description: "Your changes have been successfully saved!",
-              icon: "save",
-            })
-          );
-        } catch (error) {
-          console.log(error);
-          toast({
-            description: "Error in updating Profile",
-            icon: "save",
-            variant: "destructive",
-          });
-        }
-      }}
-      className="bg-white rounded-xl flex-1"
-    >
+    <div className="bg-white rounded-xl flex-1">
       <div className="flex flex-col gap-10 p-10">
         <div className="flex flex-col gap-2">
           <h2 className="text-2xl leading-normal font-bold md:heading-m text-grey-dark">
@@ -70,26 +36,20 @@ function ProfilePage() {
             Add your details to create a personal touch to your profile.
           </p>
         </div>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-10">
           <ProfileForm
-            key={profile?.firstName}
-            profilePhoto={profile?.photo}
+            key={user.email}
+            profilePhoto={user?.avatar}
+            userId={user.id}
             defaultValues={{
-              firstName: profile?.firstName as string,
-              lastName: profile?.lastName as string,
-              email: profile?.email as string,
+              firstName: user?.firstName ?? "",
+              lastName: user?.lastName ?? "",
+              email: user.email,
             }}
           />
         </div>
       </div>
-      <div className="border-t border-borders p-4 md:py-6 md:px-10">
-        <div className="md:flex justify-end">
-          <Button className="w-full md:w-fit" type="submit">
-            Save
-          </Button>
-        </div>
-      </div>
-    </form>
+    </div>
   );
 }
 
