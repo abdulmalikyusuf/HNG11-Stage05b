@@ -1,5 +1,8 @@
+import { Suspense } from "react";
+
 import { Icons } from "@/components/ui/icons";
 import { Toaster } from "@/components/ui/toaster";
+
 function AuthLayout({
   children,
 }: Readonly<{
@@ -53,7 +56,7 @@ function AuthLayout({
         </div>
         <div className="mt-16 md:mt-14 bg-white rounded-xl">
           <div className="flex flex-col gap-10 p-10">
-            {children}
+            <Suspense>{children}</Suspense>
             <Toaster />
           </div>
         </div>
