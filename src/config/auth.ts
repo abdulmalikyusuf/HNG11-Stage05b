@@ -11,7 +11,13 @@ export const authConfig = {
         nextUrl.pathname.startsWith("/signin") ||
         nextUrl.pathname.startsWith("/signup");
 
-      if (isLoggedIn || isOnAuthPage) return true;
+      if (isOnAuthPage) return true;
+      if (isLoggedIn) {
+        if (isOnAuthPage) {
+          return Response.redirect(new URL("/", nextUrl));
+        }
+        return true;
+      }
       return false; // Redirect unauthenticated users to login page
     },
     async jwt({ token, user }) {

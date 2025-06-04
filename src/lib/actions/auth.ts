@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
 import { users } from "@/db/schema";
@@ -11,11 +11,10 @@ import { type SignUpSchema } from "../schema";
 export async function signUp(data: SignUpSchema) {
   try {
     const { email, password } = data;
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
 
-    const [result] = await db
-      .insert(users)
-      .values({ email, password: hashedPassword });
+    const [result] = await db.insert(users).values({ email, password: hash });
 
     const insertedId = result.insertId as unknown as string;
 
@@ -24,8 +23,6 @@ export async function signUp(data: SignUpSchema) {
       .from(users)
       .where(eq(users.id, insertedId))
       .then((rows) => rows[0]);
-
-    console.log(insertedId, insertedUser);
 
     return {
       success: true,

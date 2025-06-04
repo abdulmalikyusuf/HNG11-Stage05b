@@ -1,6 +1,6 @@
 "use server";
 
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -26,9 +26,9 @@ export async function authenticate(
           return "Something went wrong.";
       }
     }
-    if (error instanceof Error) {
-      return error.message;
-    }
+    // if (error instanceof Error) {
+    //   return error.message;
+    // }
     throw error;
   }
 }
@@ -78,11 +78,9 @@ export async function updateUser(formData: FormData) {
     if (avatarUrl) data["avatar"] = avatarUrl;
 
     if (formDataObject["password"]) {
-      const hashedPassword = await bcrypt.hash(
-        formDataObject["password"] as string,
-        10
-      );
-      data["password"] = hashedPassword;
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync(formDataObject["password"] as string, salt);
+      data["password"] = hash;
     }
 
     const [result] = await db
