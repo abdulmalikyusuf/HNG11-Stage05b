@@ -3,14 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "21.x"
+    "node": "20.x"
   },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "supabase:gen": "dotenv -e .env.local -c -- cross-env SUPABASE_PROJECT_ID=%SUPABASE_PROJECT_ID% supabase gen types typescript --project-id %SUPABASE_PROJECT_ID% > database-generated.types.ts"
+    "lint": "next lint"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
